@@ -18,6 +18,9 @@
 #include "lin_processor.h"
 #include "system_clock.h"
 #include <EEPROM.h>
+#include "SevSeg.h"
+
+SevSeg sevseg; //Instantiate a seven segment controller object
 
 uint16_t lastPosition = 0;
 uint16_t memOne = 0;
@@ -31,8 +34,8 @@ uint8_t currentTableMovement = 0;
 uint16_t minPosition = 530;
 uint16_t maxPosition = 5500;
 
-const int moveTableUpPin = PD4;
-const int moveTableDownPin = PD7;
+const int moveTableUpPin = 4;
+const int moveTableDownPin = 7;
 
 const int moveUpButton = 3;
 const int moveM2Button = 6;
@@ -185,7 +188,7 @@ void processLINFrame(LinFrame frame) {
 
 void readButtons() {
 
-  if (!digitalRead(moveUpButton)) {
+  if (digitalRead(moveUpButton) == HIGH) {
 
     pressedButton = moveUpButton;
     if (lastPressedButton != pressedButton) {
@@ -195,7 +198,7 @@ void readButtons() {
     return;
   }
 
-  if (!digitalRead(moveM1Button)) {
+  if (digitalRead(moveM1Button) == HIGH) {
     pressedButton = moveM1Button;
     if (lastPressedButton != pressedButton) {
       Serial.println("Button M1 Pressed");
@@ -205,7 +208,7 @@ void readButtons() {
     return;
   }
 
-  if (!digitalRead(moveM2Button)) {
+  if (digitalRead(moveM2Button) == HIGH) {
     pressedButton = moveM2Button;
     if (lastPressedButton != pressedButton) {
       Serial.println("Button M2 Pressed");
@@ -215,7 +218,7 @@ void readButtons() {
     return;
   }
 
-  if (!digitalRead(moveDownButton)) {
+  if (digitalRead(moveDownButton) == HIGH) {
     pressedButton = moveDownButton;
     if (lastPressedButton != pressedButton) {
       Serial.println("Button DN Pressed");
@@ -289,6 +292,20 @@ void loopButtons() {
 
 void setup() {
 
+  // Display setup
+  byte numDigits = 4;
+  byte digitPins[] = {12, 11, 10, 9};
+  byte segmentPins[] = {13, 19, 17, 15, 14, 16, 18};
+  bool resistorsOnSegments = false; // 'false' means resistors are on digit pins
+  byte hardwareConfig = COMMON_CATHODE; // See README.md for options
+  bool updateWithDelays = false; // false Default. Recommended
+  bool leadingZeros = false; // Use 'true' if you'd like to keep the leading zeros
+  bool dotPointNotConnected = true; // Use 'true' if you'd like to leave dot point segment disconnected (that way you could use 7 pins for segments instead of 8.)
+
+
+  sevseg.begin(hardwareConfig, numDigits, digitPins, segmentPins, resistorsOnSegments, updateWithDelays, leadingZeros, dotPointNotConnected);
+  sevseg.setBrightness(90);
+
 
   Serial.begin(115200);
   while (!Serial) {;};
@@ -299,10 +316,10 @@ void setup() {
   pinMode(moveTableUpPin, OUTPUT);
   pinMode(moveTableDownPin, OUTPUT);
 
-  pinMode(moveUpButton, INPUT_PULLUP);
-  pinMode(moveDownButton, INPUT_PULLUP);
-  pinMode(moveM1Button, INPUT_PULLUP);
-  pinMode(moveM2Button, INPUT_PULLUP);
+  pinMode(moveUpButton, INPUT);
+  pinMode(moveDownButton, INPUT);
+  pinMode(moveM1Button, INPUT);
+  pinMode(moveM2Button, INPUT);
 
   Serial.print("moveUpButton ");
   Serial.println(moveUpButton);
@@ -322,9 +339,6 @@ void setup() {
 
   // Enable global interrupts.
   sei();
-
-
-
 
   EEPROM.get(0, targetThreshold);
   if (targetThreshold == 255) {
@@ -346,10 +360,11 @@ void setup() {
 
 }
 
-
-
 void loop() {
 
+  sevseg.setNumber(lastPosition);
+  sevseg.refreshDisplay();
+  //sevseg.blank();
 
   // Periodic updates.
   system_clock::loop();
@@ -368,7 +383,7 @@ void loop() {
   // direction == 2 => Target is below table
   uint8_t direction = desiredTableDirection();
 
-  if( currentTarget > minPosition && currentTarget < maxPosition ){
+  if ( currentTarget > minPosition && currentTarget < maxPosition ) {
     moveTable(direction);
   } else {
     // Stop table
