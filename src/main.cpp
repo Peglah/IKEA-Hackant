@@ -29,7 +29,7 @@ uint8_t targetThreshold = 0;
 uint8_t currentTableMovement = 0;
 
 uint16_t minPosition = 530;
-uint16_t maxPosition = 5500;
+uint16_t maxPosition = 5600;
 
 const int moveTableUpPin = PD4;
 const int moveTableDownPin = PD7;
