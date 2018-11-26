@@ -1,4 +1,6 @@
-# IKEA Hackant
+# WARNING - PRE ALPHA. CODE MIGHT NOT EVEN BE WRITTEN!
+
+# IKEA Hackant with a 7 segment display
 
 A simple LIN slave attached to the stock controller board adds two memory buttons.
 If you are interested in how this was developed check out my YouTube Tutorial
