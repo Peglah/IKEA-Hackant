@@ -46,8 +46,8 @@ const int moveDownButton = 8;
 
 // 7 segment display configuratoin
 byte numDigits = 4;
-byte digitPins[] = {19, 16, 15, 13}; // Pins 12, 9, 8, 6.
-byte segmentPins[] = {18, 14, 11, 10, 9, 17, 12}; // Pins 11, 7, 4, 2, 1, 10, 5.
+byte digitPins[] = {19, 16, 15, 13}; // Pins on the display 12, 9, 8, 6.
+byte segmentPins[] = {18, 14, 11, 10, 9, 17, 12}; // Pins on the display 11, 7, 4, 2, 1, 10, 5.
 bool resistorsOnSegments = false; // 'false' means resistors are on digit pins
 byte hardwareConfig = COMMON_CATHODE; // See README.md for options
 bool updateWithDelays = false; // false Default. Recommended
