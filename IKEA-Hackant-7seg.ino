@@ -200,7 +200,7 @@ void processLINFrame(LinFrame frame) {
 
 void readButtons() {
 
-  if (digitalRead(moveUpButton) == HIGH) {
+  if (!digitalRead(moveUpButton)) {
 
     pressedButton = moveUpButton;
     if (lastPressedButton != pressedButton) {
@@ -210,7 +210,7 @@ void readButtons() {
     return;
   }
 
-  if (digitalRead(moveM1Button) == HIGH) {
+  if (!digitalRead(moveM1Button)) {
     pressedButton = moveM1Button;
     if (lastPressedButton != pressedButton) {
       Serial.println("Button M1 Pressed");
@@ -220,7 +220,7 @@ void readButtons() {
     return;
   }
 
-  if (digitalRead(moveM2Button) == HIGH) {
+  if (!digitalRead(moveM2Button)) {
     pressedButton = moveM2Button;
     if (lastPressedButton != pressedButton) {
       Serial.println("Button M2 Pressed");
@@ -230,7 +230,7 @@ void readButtons() {
     return;
   }
 
-  if (digitalRead(moveDownButton) == HIGH) {
+  if (!digitalRead(moveDownButton)) {
     pressedButton = moveDownButton;
     if (lastPressedButton != pressedButton) {
       Serial.println("Button DN Pressed");
@@ -317,10 +317,10 @@ void setup() {
   pinMode(moveTableUpPin, OUTPUT);
   pinMode(moveTableDownPin, OUTPUT);
 
-  pinMode(moveUpButton, INPUT);
-  pinMode(moveDownButton, INPUT);
-  pinMode(moveM1Button, INPUT);
-  pinMode(moveM2Button, INPUT);
+  pinMode(moveUpButton, INPUT_PULLUP);
+  pinMode(moveDownButton, INPUT_PULLUP);
+  pinMode(moveM1Button, INPUT_PULLUP);
+  pinMode(moveM2Button, INPUT_PULLUP);
 
   Serial.print("moveUpButton ");
   Serial.println(moveUpButton);
