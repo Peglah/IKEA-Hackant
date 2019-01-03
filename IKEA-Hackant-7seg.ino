@@ -34,19 +34,31 @@ uint8_t currentTableMovement = 0;
 uint16_t minPosition = 530;
 uint16_t maxPosition = 5500;
 
+// Pins to move the table
 const int moveTableUpPin = 4;
 const int moveTableDownPin = 7;
 
+// Pins for the buttons
 const int moveUpButton = 3;
 const int moveM2Button = 6;
 const int moveM1Button = 5;
 const int moveDownButton = 8;
 
+// 7 segment display configuratoin
+byte numDigits = 4;
+byte digitPins[] = {19, 16, 15, 13}; // Pins 12, 9, 8, 6.
+byte segmentPins[] = {18, 14, 11, 10, 9, 17, 12}; // Pins 11, 7, 4, 2, 1, 10, 5.
+bool resistorsOnSegments = false; // 'false' means resistors are on digit pins
+byte hardwareConfig = COMMON_CATHODE; // See README.md for options
+bool updateWithDelays = false; // false Default. Recommended
+bool leadingZeros = false; // Use 'true' if you'd like to keep the leading zeros
+bool dotPointNotConnected = true; // Use 'true' if you'd like to leave dot point segment disconnected (that way you could use 7 pins for segments instead of 8.)
+int displayBrightness = 90;
+
 int pressedButton = 0;
 int lastPressedButton = 0;
 unsigned long lastPressed = 0;
 uint8_t doOnce = false;
-
 
 void printValues() {
   Serial.println("======= VALUES =======");
@@ -293,19 +305,8 @@ void loopButtons() {
 void setup() {
 
   // Display setup
-  byte numDigits = 4;
-  byte digitPins[] = {12, 11, 10, 9};
-  byte segmentPins[] = {13, 19, 17, 15, 14, 16, 18};
-  bool resistorsOnSegments = false; // 'false' means resistors are on digit pins
-  byte hardwareConfig = COMMON_CATHODE; // See README.md for options
-  bool updateWithDelays = false; // false Default. Recommended
-  bool leadingZeros = false; // Use 'true' if you'd like to keep the leading zeros
-  bool dotPointNotConnected = true; // Use 'true' if you'd like to leave dot point segment disconnected (that way you could use 7 pins for segments instead of 8.)
-
-
   sevseg.begin(hardwareConfig, numDigits, digitPins, segmentPins, resistorsOnSegments, updateWithDelays, leadingZeros, dotPointNotConnected);
-  sevseg.setBrightness(90);
-
+  sevseg.setBrightness(displayBrightness);
 
   Serial.begin(115200);
   while (!Serial) {;};
