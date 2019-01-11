@@ -31,9 +31,6 @@ uint8_t initializedTarget = false;
 uint8_t targetThreshold = 0;
 uint8_t currentTableMovement = 0;
 
-uint16_t minPosition = 530;
-uint16_t maxPosition = 5500;
-
 // Pins to move the table
 const int moveTableUpPin = 4;
 const int moveTableDownPin = 7;
@@ -53,7 +50,7 @@ byte hardwareConfig = COMMON_CATHODE; // See README.md for options
 bool updateWithDelays = false; // false Default. Recommended
 bool leadingZeros = false; // Use 'true' if you'd like to keep the leading zeros
 bool dotPointNotConnected = true; // Use 'true' if you'd like to leave dot point segment disconnected (that way you could use 7 pins for segments instead of 8.)
-int displayBrightness = 100;
+int displayBrightness = 50;
 
 int pressedButton = 0;
 int lastPressedButton = 0;
@@ -290,15 +287,10 @@ void loopButtons() {
         } else if (lastPressedButton == moveM2Button) {
           storeM2(lastPosition);
         }
-
       }
-
     }
-
-
     doOnce = false;
   }
-
 }
 
 
@@ -309,7 +301,9 @@ void setup() {
   sevseg.setBrightness(displayBrightness);
 
   Serial.begin(9600);
-  while (!Serial) {;};
+  while (!Serial) {
+    ;
+  };
 
   Serial.println("IKEA Hackant v1.0");
   Serial.println("Type 'HELP' to display all commands.");
@@ -365,11 +359,9 @@ void loop() {
 
   sevseg.setNumber(lastPosition);
   sevseg.refreshDisplay();
-  //sevseg.blank();
 
   // Periodic updates.
   system_clock::loop();
-
 
   // Handle recieved LIN frames.
   LinFrame frame;
@@ -384,14 +376,7 @@ void loop() {
   // direction == 2 => Target is below table
   uint8_t direction = desiredTableDirection();
 
-  if ( currentTarget > minPosition && currentTarget < maxPosition ) {
-    moveTable(direction);
-  } else {
-    // Stop table
-    moveTable(0);
-    Serial.println("Target exceeds limit! No Movement!");
-  }
-
+  moveTable(direction);
 
   if (Serial.available() > 0) {
 
