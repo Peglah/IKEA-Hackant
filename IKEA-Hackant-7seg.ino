@@ -53,7 +53,7 @@ byte hardwareConfig = COMMON_CATHODE; // See README.md for options
 bool updateWithDelays = false; // false Default. Recommended
 bool leadingZeros = false; // Use 'true' if you'd like to keep the leading zeros
 bool dotPointNotConnected = true; // Use 'true' if you'd like to leave dot point segment disconnected (that way you could use 7 pins for segments instead of 8.)
-int displayBrightness = 90;
+int displayBrightness = 100;
 
 int pressedButton = 0;
 int lastPressedButton = 0;
@@ -308,7 +308,7 @@ void setup() {
   sevseg.begin(hardwareConfig, numDigits, digitPins, segmentPins, resistorsOnSegments, updateWithDelays, leadingZeros, dotPointNotConnected);
   sevseg.setBrightness(displayBrightness);
 
-  Serial.begin(115200);
+  Serial.begin(9600);
   while (!Serial) {;};
 
   Serial.println("IKEA Hackant v1.0");
