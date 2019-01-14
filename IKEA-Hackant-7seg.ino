@@ -51,9 +51,11 @@ bool updateWithDelays = false; // false Default. Recommended
 bool leadingZeros = false; // Use 'true' if you'd like to keep the leading zeros
 bool dotPointNotConnected = true; // Use 'true' if you'd like to leave dot point segment disconnected (that way you could use 7 pins for segments instead of 8.)
 int displayBrightness = 50;
+unsigned long displayTimeout = 5 * 60000;
 
 int pressedButton = 0;
 int lastPressedButton = 0;
+unsigned long timeSinceButtonPressed = 0;
 unsigned long lastPressed = 0;
 uint8_t doOnce = false;
 
@@ -198,8 +200,8 @@ void processLINFrame(LinFrame frame) {
 void readButtons() {
 
   if (!digitalRead(moveUpButton)) {
-
     pressedButton = moveUpButton;
+    timeSinceButtonPressed = millis();
     if (lastPressedButton != pressedButton) {
       Serial.println("Button UP Pressed");
       lastPressedButton = pressedButton;
@@ -209,33 +211,33 @@ void readButtons() {
 
   if (!digitalRead(moveM1Button)) {
     pressedButton = moveM1Button;
+    timeSinceButtonPressed = millis();
     if (lastPressedButton != pressedButton) {
       Serial.println("Button M1 Pressed");
       lastPressedButton = pressedButton;
-
     }
     return;
   }
 
   if (!digitalRead(moveM2Button)) {
     pressedButton = moveM2Button;
+    timeSinceButtonPressed = millis();
     if (lastPressedButton != pressedButton) {
       Serial.println("Button M2 Pressed");
       lastPressedButton = pressedButton;
-
     }
     return;
   }
 
   if (!digitalRead(moveDownButton)) {
     pressedButton = moveDownButton;
+    timeSinceButtonPressed = millis();
     if (lastPressedButton != pressedButton) {
       Serial.println("Button DN Pressed");
       lastPressedButton = pressedButton;
     }
     return;
   }
-
 
   pressedButton = 0;
 
@@ -357,9 +359,14 @@ void setup() {
 
 void loop() {
 
-  sevseg.setNumber(lastPosition);
-  sevseg.refreshDisplay();
-
+  sevseg.setNumber(map(lastPosition, 165, 6363, 605, 1255));
+  if (millis() - timeSinceButtonPressed < displayTimeout) {
+    sevseg.refreshDisplay();
+  }
+  else {
+    sevseg.blank();
+  }
+  
   // Periodic updates.
   system_clock::loop();
 
